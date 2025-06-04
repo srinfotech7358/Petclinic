@@ -13,12 +13,10 @@ stages{
 
         steps{
 
-            git branch: 'main', url: 'https://github.com/srinfotech7358/Petclinic.git'
+            git branch: 'release/2025.06.04', url: 'https://github.com/srinfotech7358/Petclinic.git'
         }
     }
 
-
-    
      stage('Build') {
             steps {
                bat 'mvn clean install'
@@ -30,8 +28,7 @@ stages{
                bat 'mvn test'
             }
         }
-        
-          stage('package') {
+ stage('package') {
             steps {
                bat 'mvn package'
             }
@@ -54,6 +51,7 @@ stages{
             }
         }
 
+
 stage ('Artifactory Server'){
     steps {
        rtServer (
@@ -75,13 +73,14 @@ stage('Upload'){
            "files": [
               {
               "pattern": "*.war",
-              "target": "srinfotech"
+              "target": "srinfotech-solutions-private-limited"
               }
                     ]
                    }''',
                 )
     }
 }
+
 stage ('Publish build info') {
     steps {
         rtPublishBuildInfo (
@@ -89,8 +88,6 @@ stage ('Publish build info') {
         )
     }
 }
-
-
  stage('Deploy Application into Tomcat Server') {
             steps {
                deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'NewTomcat', path: '', url: 'http://localhost:8080/')], contextPath: 'SRIN solutions PVT LTD', war: '**/*.war'
